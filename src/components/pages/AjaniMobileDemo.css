@@ -1,0 +1,342 @@
+/*
+  The demonstration page.
+
+  Two columns at desktop with the phone as the focal point and a narrow
+  companion beside it; one column below 900px, phone first, so a reader on a
+  narrow screen meets the thing itself before the notes about it.
+
+  The phone is width-constrained rather than fixed, so it shrinks with its
+  column instead of pushing the page wider — which is what keeps 320px free of
+  horizontal scrolling, where `body { overflow-x: hidden }` would otherwise
+  hide the break rather than show it.
+*/
+
+.demo-page {
+  background-color: var(--color-bg-canvas);
+  padding: calc(var(--space-4) + var(--header-gap)) 0 var(--space-6);
+}
+
+.demo-page > .container > .eyebrow,
+.demo-page-title {
+  text-align: center;
+}
+
+.demo-page-title {
+  font-size: clamp(1.9rem, 4.4vw, 2.6rem);
+  margin-bottom: var(--space-2);
+}
+
+/*
+  Centred over the card it introduces.
+
+  The column is a 1fr track, so centring the block in the track itself would
+  float this text to the right of the card below it on a wide screen. Matching
+  the card's own width instead makes the left column read as one stack, with
+  the lines centred across the same span the card occupies.
+*/
+.demo-page-lede {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  max-width: 34rem;
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* Preview introduction shares the first grid row with the browser/native introduction. */
+.demo-cue {
+  grid-column: 2;
+  grid-row: 1;
+  max-width: 46ch;
+  /* Centred over the phone below it, the same way the lede is centred over
+     the card. The heading and both supporting lines follow. */
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* The eyebrow is this region's heading, so it needs the sans face and no
+   heading margin that the element selector in theme.css would otherwise give
+   it. Nothing about how it looks changes. */
+.demo-cue h2 {
+  font-family: var(--font-sans);
+  margin: 0;
+}
+
+.demo-cue-line {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* Shared introduction row, then card and phone. The card spans the phone
+   and controls rows; natural grid sizing permits longer content to grow. */
+.demo-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  gap: var(--space-3) var(--space-5);
+  align-items: stretch;
+}
+
+/* --- Companion panel --------------------------------------------------- */
+
+.demo-companion {
+  grid-column: 1;
+  grid-row: 2 / span 2;
+  /* Explicitly left, not by omission. The introduction above it is centred,
+     and a card of numbered instructions is read, not looked at — ragged-right
+     body text with a fixed marker column is what keeps it scannable. */
+  text-align: left;
+  min-width: 0;
+  max-width: 34rem;
+  padding: var(--space-4);
+  background-color: var(--ahc-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+  /* So the groups inside can use the height the grid hands the card. */
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-companion-title {
+  font-size: 1.15rem;
+  margin-bottom: var(--space-2);
+}
+
+/*
+  The marker column belongs to the item, not to the list.
+
+  Reserving it with the list's own padding works only while every marker is the
+  same width, and it puts the reservation one level away from the thing being
+  aligned. Each item carries its own start margin instead: the marker is
+  painted in that margin because the position is `outside`, and the item's
+  content box begins at the same x for the first line and every wrapped line
+  after it. Nothing measures, transforms, clips or pads a spacer to achieve it.
+*/
+.demo-try-list {
+  margin: 0;
+  padding-left: 0;
+  list-style-position: outside;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.demo-try-list li {
+  display: list-item;
+  list-style-position: outside;
+  /* Wide enough that a wider marker still cannot reach the text edge. */
+  margin-left: 1.75rem;
+  text-indent: 0;
+  padding-inline-start: 0;
+  margin-bottom: 0.65rem;
+}
+
+.demo-try-list li:last-child {
+  margin-bottom: 0;
+}
+
+/*
+  Two weights and one colour, and no third thing.
+
+  The lead phrase is bold and teal — 9.2:1 on this card's surface, the same
+  brand ink the rest of the site uses for emphasis. Quoted interface labels and
+  the progress counts are bold in the ordinary reading colour. Nothing is
+  boxed, tinted or bordered: highlighting a word here must not make it look
+  like something to press.
+*/
+.demo-try-lead {
+  font-weight: 700;
+  color: var(--color-brand-strong);
+}
+
+.demo-try-ui,
+.demo-try-count {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.demo-try-list li::marker {
+  color: var(--color-brand);
+  font-weight: 700;
+}
+
+/*
+  The controls sit on the phone's own width.
+
+  `--demo-phone-width` is the value the stage gives the frame, and the media
+  query below hands the same one to this block, so the button tracks the device
+  as it shrinks instead of being pinned to a number of its own. The 390px
+  fallback covers the single-column layout, where the stage sets nothing and
+  the frame is at its full size.
+*/
+.demo-phone-controls {
+  grid-column: 2;
+  grid-row: 3;
+  min-width: 0;
+  max-width: var(--demo-phone-width, 390px);
+  margin-inline: auto;
+  text-align: center;
+  overflow-wrap: anywhere;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-soft);
+}
+
+/* Full width of that column, so Reset reads as the phone's control rather
+   than as a button that happens to be underneath it. */
+.demo-phone-controls .btn {
+  width: 100%;
+}
+
+.demo-reset-status {
+  margin: var(--space-1) 0 0;
+  min-height: 1.3rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/*
+  The two navigation links share a row wherever the card can hold them.
+
+  auto-fit against an 11rem minimum: two balanced columns once the card's
+  content box reaches about 23rem, one column below that, decided by the
+  container rather than by a breakpoint. Putting them side by side is also what
+  brings the card's bottom back level with the phone — it is a button row
+  shorter than it was, so its content once again fits the height the grid gives
+  it and the card stretches to meet the phone instead of running past it.
+
+  Both stay outline buttons, so neither competes with the filled Reset above.
+*/
+.demo-companion-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: var(--space-2);
+  /* Takes up the slack, so the card's last group meets its bottom edge. */
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-soft);
+}
+
+/* --- Phone stage ------------------------------------------------------- */
+
+/*
+  The phone column owns the width.
+
+  --demo-phone-width is declared here rather than on .demo-app so the height
+  cap below can set one value that the frame reads through --phone-width. The
+  frame takes it as a *definite* width capped at 100%; it must never be
+  `width: 100%`, because this stage sits in an `auto` grid track where a
+  percentage width contributes only its content's max-content size — which is
+  what collapsed the phone to its bezel.
+
+  The stage contains only the phone. The stage's top edge is the phone's top
+  edge, which is what puts the device on the same line as the Journeys card
+  beside it.
+*/
+.demo-stage {
+  --demo-phone-width: 390px;
+
+  /* Start alignment preserves the frame's intrinsic aspect ratio. */
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
+
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* Overrides the component's own default in DemoPhone.css, which stays there so
+   the phone remains self-sufficient wherever else it is used. */
+.demo-stage .demo-app {
+  --phone-width: var(--demo-phone-width, 390px);
+}
+
+
+
+/*
+  Fit the whole device on an ordinary laptop.
+
+  The frame's height is decided by its width and the screen's 941/2048 ratio,
+  so capping the width by the height that is actually available is what keeps
+  the bottom of the phone on screen — no transform, no zoom assumption.
+
+  The reserved height is the sticky header this site already measures once
+  (--scroll-offset, 77px) plus --space-5 of clearance. The 18px is the bezel
+  the frame adds on each axis, which sits outside the aspect ratio.
+
+  Applied at the two-column breakpoint only: below it the page is expected to
+  scroll, and a short phone there would be smaller than it needs to be.
+*/
+@media screen and (min-width: 901px) {
+  /* Preserve the approved desktop journey spacing. */
+  .demo-try-list li {
+    margin-bottom: 0.85rem;
+  }
+
+  /*
+    Both read the same cap. Listing them together keeps the expression in one
+    place: the button cannot drift away from the width of the device above it.
+  */
+  .demo-stage,
+  .demo-phone-controls {
+    --demo-reserved: calc(var(--scroll-offset) + var(--space-5));
+    --demo-height-fit: calc((100vh - var(--demo-reserved) - 18px) * 941 / 2048 + 18px);
+    --demo-height-fit: calc((100dvh - var(--demo-reserved) - 18px) * 941 / 2048 + 18px);
+
+    /*
+      Never above the 390px the design calls for, and never below 260px, where
+      the interface stops being comfortable to operate. The floor bites only
+      under about a 660px-tall viewport; below that the page scrolls, which is
+      the honest fallback — shrinking further would trade one problem for a
+      worse one.
+    */
+    --demo-phone-width: clamp(260px, var(--demo-height-fit), 390px);
+  }
+}
+
+@media screen and (max-width: 900px) {
+  /*
+    One column, in source order: cue, phone, controls, introduction, card. Every placement is dropped
+    so each row takes the height its own content needs — nothing is stretched
+    to match anything else here.
+  */
+  .demo-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    gap: var(--space-4);
+  }
+
+  .demo-page-lede,
+  .demo-phone-controls,
+  .demo-cue,
+  .demo-stage,
+  .demo-companion {
+    grid-column: auto;
+    grid-row: auto;
+    align-self: auto;
+  }
+
+  .demo-companion {
+    max-width: none;
+  }
+
+  .demo-companion-links {
+    margin-top: var(--space-3);
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .demo-companion {
+    padding: var(--space-3);
+  }
+
+  /* No --phone-width override is needed here: max-width: 100% on the frame
+     already lets it take the column when the column is the narrower of the
+     two. Setting it to a percentage would reintroduce the collapse this
+     stylesheet's grid caused, by making the frame's width parent-derived
+     again. */
+}
+
+.demo-try-text { display: block; }
+.demo-action-label { display: block; margin-top: var(--space-2); font-size: 0.85rem; color: var(--color-text-muted); }
